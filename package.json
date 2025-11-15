@@ -5,8 +5,10 @@
   "dependencies": {
     "@netlify/blobs": "^7.4.0",
     "lucide-react": "^0.294.0",
+    "netlify-identity-widget": "^1.9.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^7.9.6",
     "react-scripts": "5.0.1"
   },
   "scripts": {
