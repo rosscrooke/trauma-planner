@@ -380,139 +380,158 @@ const TraumaSurgeryPlannerRefactored = () => {
 
   // Rest of the component JSX remains the same as the original
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Trauma Surgery Staff Planner</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Trauma Surgery Daily Capacity Planner</h1>
 
         {/* Controls Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Settings</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Total Staff Required
-              </label>
-              <input
-                type="number"
-                value={baseStaff}
-                onChange={(e) => setBaseStaff(parseInt(e.target.value) || 20)}
-                className="w-full px-3 py-2 border rounded-lg"
-                min="1"
-                max="30"
-              />
-            </div>
-
-            {/* Leave Management */}
-            <div className="col-span-2">
-              <label className="block text-sm font-medium mb-2">
-                Quick Add Leave (Select week from calendar first)
-              </label>
-              <div className="flex gap-2">
-                <select
-                  value={selectedSurgeon}
-                  onChange={(e) => setSelectedSurgeon(e.target.value)}
-                  className="flex-1 px-3 py-2 border rounded-lg"
-                  disabled={!selectedWeek}
-                >
-                  <option value="">Select surgeon...</option>
-                  {getConsultantNames().map(name => (
-                    <option key={name} value={name}>{name}</option>
-                  ))}
-                </select>
-                <select
-                  value={selectedLeaveReason}
-                  onChange={(e) => setSelectedLeaveReason(e.target.value)}
-                  className="px-3 py-2 border rounded-lg"
-                  disabled={!selectedWeek}
-                >
-                  <option value="">Reason...</option>
-                  {leaveReasons.map(reason => (
-                    <option key={reason} value={reason}>{reason}</option>
-                  ))}
-                </select>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Base Staffing */}
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-3">Base Staffing</h3>
+            <div className="flex items-center space-x-4">
+              <label className="text-sm font-medium">Total Surgeons:</label>
+              <div className="flex items-center space-x-2">
                 <button
-                  onClick={addLeave}
-                  disabled={!selectedSurgeon || !selectedWeek || !selectedLeaveReason}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  onClick={() => setBaseStaff(Math.max(1, baseStaff - 1))}
+                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                 >
-                  Add Leave
+                  -
+                </button>
+                <span className="px-3 py-1 bg-gray-100 rounded font-medium">{baseStaff}</span>
+                <button
+                  onClick={() => setBaseStaff(Math.min(30, baseStaff + 1))}
+                  className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                >
+                  +
                 </button>
               </div>
-              {selectedWeek && (
-                <p className="text-sm text-gray-600 mt-1">
-                  Selected: Week starting {selectedWeek.startDate.toLocaleDateString()}
-                </p>
-              )}
             </div>
           </div>
 
-          {/* Current Leave Display */}
-          {leave.length > 0 && (
-            <div className="mt-4">
-              <h3 className="text-sm font-medium mb-2">Current Leave:</h3>
-              <div className="space-y-1 max-h-32 overflow-y-auto">
-                {leave.map((l) => (
-                  <div key={l.id} className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
-                    <span>
-                      <strong>{l.name}</strong>: {new Date(l.startDate).toLocaleDateString()} - {new Date(l.endDate).toLocaleDateString()} ({l.reason})
-                    </span>
-                    {l.id !== 999999 && (
-                      <button
-                        onClick={() => handleRemoveLeave(l.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
+          {/* Leave Management */}
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-3">Leave Management</h3>
+            <div className="space-y-2 text-sm">
+              <select
+                value={selectedSurgeon}
+                onChange={(e) => setSelectedSurgeon(e.target.value)}
+                className="w-full px-2 py-1 border rounded"
+                disabled={!selectedWeek}
+              >
+                <option value="">Select surgeon...</option>
+                {getConsultantNames().map(name => (
+                  <option key={name} value={name}>{name}</option>
                 ))}
+              </select>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="date"
+                  placeholder="Start date"
+                  className="px-2 py-1 border rounded"
+                  value={selectedWeek ? selectedWeek.days[0].date.toISOString().split('T')[0] : ''}
+                  disabled
+                />
+                <input
+                  type="date"
+                  placeholder="End date"
+                  className="px-2 py-1 border rounded"
+                  value={selectedWeek ? selectedWeek.days[4].date.toISOString().split('T')[0] : ''}
+                  disabled
+                />
               </div>
+              <select
+                value={selectedLeaveReason}
+                onChange={(e) => setSelectedLeaveReason(e.target.value)}
+                className="w-full px-2 py-1 border rounded"
+                disabled={!selectedWeek}
+              >
+                <option value="">Reason for leave...</option>
+                {leaveReasons.map(reason => (
+                  <option key={reason} value={reason}>{reason}</option>
+                ))}
+              </select>
+              <button
+                onClick={addLeave}
+                disabled={!selectedSurgeon || !selectedWeek || !selectedLeaveReason}
+                className="w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Add Leave
+              </button>
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* Current Swaps Display */}
-          {Object.keys(swaps).length > 0 && (
-            <div className="mt-4">
-              <h3 className="text-sm font-medium mb-2">Current Swaps:</h3>
-              <div className="space-y-1 max-h-32 overflow-y-auto">
-                {Object.entries(swaps).map(([key, swap]) => {
-                  const [week, day] = key.split('-');
-                  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-                  return (
-                    <div key={key} className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
+        {/* Current Leave and Swaps Display */}
+        <div className="bg-white p-4 rounded-lg shadow mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Current Leave Display */}
+            {leave.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Current Leave:</h3>
+                <div className="space-y-1 max-h-32 overflow-y-auto">
+                  {leave.map((l) => (
+                    <div key={l.id} className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
                       <span>
-                        Week {parseInt(week) + 1} {dayNames[day]}: <strong>{swap.originalSurgeon}</strong> → <strong>{swap.newSurgeon}</strong>
+                        <strong>{l.name}</strong>: {new Date(l.startDate).toLocaleDateString()} - {new Date(l.endDate).toLocaleDateString()} ({l.reason})
                       </span>
+                      {l.id !== 999999 && (
+                        <button
+                          onClick={() => handleRemoveLeave(l.id)}
+                          className="text-red-500 hover:text-red-700 text-xs"
+                        >
+                          Remove
+                        </button>
+                      )}
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+
+            {/* Current Swaps Display */}
+            {Object.keys(swaps).length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Current Swaps:</h3>
+                <div className="space-y-1 max-h-32 overflow-y-auto">
+                  {Object.entries(swaps).map(([key, swap]) => {
+                    const [week, day] = key.split('-');
+                    const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+                    return (
+                      <div key={key} className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
+                        <span>
+                          Week {parseInt(week) + 1} {dayNames[day]}: <strong>{swap.originalSurgeon}</strong> → <strong>{swap.newSurgeon}</strong>
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Calendar View */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <h2 className="text-xl font-semibold p-4 border-b">52-Week Capacity View</h2>
+        <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 border-b">
-                  <th className="px-4 py-2 text-left text-sm font-medium">Week</th>
-                  <th className="px-4 py-2 text-center text-sm font-medium">Mon</th>
-                  <th className="px-4 py-2 text-center text-sm font-medium">Tue</th>
-                  <th className="px-4 py-2 text-center text-sm font-medium">Wed</th>
-                  <th className="px-4 py-2 text-center text-sm font-medium">Thu</th>
-                  <th className="px-4 py-2 text-center text-sm font-medium">Fri</th>
-                  <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
+              <thead className="bg-gray-800 text-white">
+                <tr>
+                  <th className="px-4 py-3 text-left">Week</th>
+                  <th className="px-4 py-3 text-center">Mon</th>
+                  <th className="px-4 py-3 text-center">Tue</th>
+                  <th className="px-4 py-3 text-center">Wed</th>
+                  <th className="px-4 py-3 text-center">Thu</th>
+                  <th className="px-4 py-3 text-center">Fri</th>
+                  <th className="px-4 py-3 text-left">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {weeks.map((week) => (
                   <tr
                     key={week.weekNumber}
-                    className={`border-b hover:bg-gray-50 cursor-pointer ${
-                      selectedWeek?.weekNumber === week.weekNumber ? 'bg-blue-50' : ''
+                    className={`hover:bg-gray-50 ${
+                      selectedWeek?.weekNumber === week.weekNumber ? 'bg-blue-100' : week.weekNumber % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                     }`}
                     onClick={() => setSelectedWeek(week)}
                   >
