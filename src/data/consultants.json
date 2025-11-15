@@ -1,0 +1,141 @@
+{
+  "consultants": [
+    {
+      "id": "LH",
+      "initials": "LH",
+      "name": "Lynn Hutchings",
+      "specialties": ["general", "friday_theatre4_primary"]
+    },
+    {
+      "id": "WP",
+      "initials": "WP",
+      "name": "Will Poole",
+      "specialties": ["general"]
+    },
+    {
+      "id": "DT",
+      "initials": "DT",
+      "name": "Damien Tucker",
+      "specialties": ["general"]
+    },
+    {
+      "id": "SG",
+      "initials": "SG",
+      "name": "Selina Graham",
+      "specialties": ["general", "friday_theatre4_secondary"],
+      "maternityCover": {
+        "startDate": "2025-09-01",
+        "endDate": "2026-03-01",
+        "coveredBy": "OT"
+      }
+    },
+    {
+      "id": "DC",
+      "initials": "DC",
+      "name": "Damian Clarke",
+      "specialties": ["general"],
+      "rotationWith": "IP"
+    },
+    {
+      "id": "IP",
+      "initials": "IP",
+      "name": "Iain Packham",
+      "specialties": ["general"],
+      "rotationWith": "DC"
+    },
+    {
+      "id": "MK",
+      "initials": "MK",
+      "name": "Mike Kelly",
+      "specialties": ["general", "pelvic"]
+    },
+    {
+      "id": "AR",
+      "initials": "AR",
+      "name": "Andy Riddick",
+      "specialties": ["general"]
+    },
+    {
+      "id": "AB",
+      "initials": "AB",
+      "name": "Alasdair Bott",
+      "specialties": ["general", "friday_theatre4_tertiary"]
+    },
+    {
+      "id": "TPB",
+      "initials": "TPB",
+      "name": "Matilda Powell-Bowns",
+      "specialties": ["general"]
+    },
+    {
+      "id": "NB",
+      "initials": "NB",
+      "name": "Nic Blucher",
+      "specialties": ["general"]
+    },
+    {
+      "id": "MD",
+      "initials": "MD",
+      "name": "Mark Dahill",
+      "specialties": ["general"]
+    },
+    {
+      "id": "AT",
+      "initials": "AT",
+      "name": "Andy Tasker",
+      "specialties": ["general"]
+    },
+    {
+      "id": "RB",
+      "initials": "RB",
+      "name": "Rich Baker",
+      "specialties": ["general"],
+      "rotationWith": "SB"
+    },
+    {
+      "id": "SB",
+      "initials": "SB",
+      "name": "Simon Bick",
+      "specialties": ["general"],
+      "rotationWith": "RB"
+    },
+    {
+      "id": "PR",
+      "initials": "PR",
+      "name": "Pete Robinson",
+      "specialties": ["general"]
+    },
+    {
+      "id": "PM",
+      "initials": "PM",
+      "name": "Phil McKeag",
+      "specialties": ["general"]
+    },
+    {
+      "id": "SJ",
+      "initials": "SJ",
+      "name": "Sam Jonas",
+      "specialties": ["general"]
+    },
+    {
+      "id": "BH",
+      "initials": "BH",
+      "name": "Bill Harries",
+      "specialties": ["general", "friday_theatre4_quaternary"]
+    },
+    {
+      "id": "OT",
+      "initials": "OT",
+      "name": "Omar Toma",
+      "specialties": ["general", "maternity_cover"]
+    }
+  ],
+  "leaveReasons": [
+    "Annual leave",
+    "Study leave",
+    "Maternity leave",
+    "Paternity leave",
+    "Sick leave",
+    "Other"
+  ]
+}

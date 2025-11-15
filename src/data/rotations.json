@@ -1,0 +1,100 @@
+{
+  "packhamClarkeRotation": {
+    "startDate": "2025-08-11",
+    "pattern": ["Iain Packham", "Damian Clarke"],
+    "cycleWeeks": 8
+  },
+  "bakerBickRotation": {
+    "startDate": "2025-09-01",
+    "pattern": [
+      "Simon Bick",
+      "Simon Bick",
+      "Rich Baker",
+      "Simon Bick",
+      "Rich Baker",
+      "Simon Bick",
+      "Rich Baker",
+      "Rich Baker"
+    ],
+    "cycleWeeks": 8
+  },
+  "weeklySchedule": {
+    "monday": {
+      "flexible": ["Will Poole", "Damien Tucker", "Selina Graham", "PACKHAM_CLARKE", "Matilda Powell-Bowns"],
+      "assigned": [
+        {
+          "weeks": [1, 3],
+          "surgeon": "Mike Kelly",
+          "duty": "Theatre 4"
+        },
+        {
+          "weeks": [2, 4],
+          "surgeon": "Andy Riddick",
+          "duty": "Theatre 4"
+        }
+      ]
+    },
+    "tuesday": {
+      "flexible": ["Mike Kelly", "Alasdair Bott", "Lynn Hutchings", "Matilda Powell-Bowns", "Damien Tucker"],
+      "assigned": []
+    },
+    "wednesday": {
+      "flexible": ["Nic Blucher", "Mark Dahill", "Andy Tasker", "BAKER_BICK", "Selina Graham"],
+      "assigned": [
+        {
+          "surgeon": "Pelvic team",
+          "duty": "Theatre 4"
+        },
+        {
+          "surgeon": "Mike Kelly",
+          "duty": "Theatre 2"
+        }
+      ]
+    },
+    "thursday": {
+      "flexible": ["Andy Riddick", "Pete Robinson", "Phil McKeag", "Sam Jonas", "Andy Tasker", "Bill Harries"],
+      "assigned": [
+        {
+          "surgeon": "Bill Harries",
+          "duty": "Theatre (preferred)"
+        }
+      ]
+    },
+    "friday": {
+      "flexible": ["Andy Tasker", "Matilda Powell-Bowns", "Damien Tucker"],
+      "assigned": [
+        {
+          "surgeon": "Bill Harries",
+          "duty": "Theatre 3 (morning)"
+        }
+      ],
+      "theatre4Priority": ["Lynn Hutchings", "Selina Graham", "Alasdair Bott", "Bill Harries"]
+    }
+  },
+  "onCallSchedule": {
+    "monday": {
+      "1": "PACKHAM_CLARKE",
+      "2": "Will Poole",
+      "3": "Damien Tucker",
+      "4": "Selina Graham"
+    },
+    "tuesday": {
+      "1": "Matilda Powell-Bowns",
+      "2": "Mike Kelly",
+      "3": "Lynn Hutchings",
+      "4": "Alasdair Bott"
+    },
+    "wednesday": {
+      "1": "Andy Tasker",
+      "2": "BAKER_BICK",
+      "3": "Nic Blucher",
+      "4": "Mark Dahill"
+    },
+    "thursday": {
+      "1": "Pete Robinson",
+      "2": "Andy Riddick",
+      "3": "Sam Jonas",
+      "4": "Phil McKeag"
+    }
+  }
+}
