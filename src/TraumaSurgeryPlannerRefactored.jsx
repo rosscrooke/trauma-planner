@@ -11,6 +11,8 @@ const TraumaSurgeryPlannerRefactored = () => {
   const [selectedSwapSurgeon1, setSelectedSwapSurgeon1] = useState('');
   const [selectedSwapSurgeon2, setSelectedSwapSurgeon2] = useState('');
   const [selectedLeaveReason, setSelectedLeaveReason] = useState('');
+  const [leaveStartDate, setLeaveStartDate] = useState('');
+  const [leaveEndDate, setLeaveEndDate] = useState('');
   const [packhamClarkeOverrides, setPackhamClarkeOverrides] = useState({});
   const [bakerBickOverrides, setBakerBickOverrides] = useState({});
   const [loading, setLoading] = useState(true);
@@ -19,6 +21,14 @@ const TraumaSurgeryPlannerRefactored = () => {
   const [rotations, setRotations] = useState({});
   const [weekendRota, setWeekendRota] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Set leave dates when week is selected
+  useEffect(() => {
+    if (selectedWeek) {
+      setLeaveStartDate(selectedWeek.days[0].date.toISOString().split('T')[0]);
+      setLeaveEndDate(selectedWeek.days[4].date.toISOString().split('T')[0]);
+    }
+  }, [selectedWeek]);
 
   // Load data on component mount
   useEffect(() => {
@@ -345,16 +355,18 @@ const TraumaSurgeryPlannerRefactored = () => {
   };
 
   const addLeave = () => {
-    if (selectedSurgeon && selectedWeek && selectedLeaveReason) {
+    if (selectedSurgeon && leaveStartDate && leaveEndDate && selectedLeaveReason) {
       const leaveEntry = {
         name: selectedSurgeon,
-        startDate: selectedWeek.days[0].date.toISOString().split('T')[0],
-        endDate: selectedWeek.days[4].date.toISOString().split('T')[0],
+        startDate: leaveStartDate,
+        endDate: leaveEndDate,
         reason: selectedLeaveReason
       };
       handleAddLeave(leaveEntry);
       setSelectedSurgeon('');
       setSelectedLeaveReason('');
+      setLeaveStartDate('');
+      setLeaveEndDate('');
     }
   };
 
@@ -415,12 +427,14 @@ const TraumaSurgeryPlannerRefactored = () => {
           {/* Leave Management */}
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-3">Leave Management</h3>
+            <p className="text-xs text-gray-500 mb-2">
+              Click a week in the calendar to auto-fill dates, or enter manually
+            </p>
             <div className="space-y-2 text-sm">
               <select
                 value={selectedSurgeon}
                 onChange={(e) => setSelectedSurgeon(e.target.value)}
                 className="w-full px-2 py-1 border rounded"
-                disabled={!selectedWeek}
               >
                 <option value="">Select surgeon...</option>
                 {getConsultantNames().map(name => (
@@ -432,22 +446,21 @@ const TraumaSurgeryPlannerRefactored = () => {
                   type="date"
                   placeholder="Start date"
                   className="px-2 py-1 border rounded"
-                  value={selectedWeek ? selectedWeek.days[0].date.toISOString().split('T')[0] : ''}
-                  disabled
+                  value={leaveStartDate}
+                  onChange={(e) => setLeaveStartDate(e.target.value)}
                 />
                 <input
                   type="date"
                   placeholder="End date"
                   className="px-2 py-1 border rounded"
-                  value={selectedWeek ? selectedWeek.days[4].date.toISOString().split('T')[0] : ''}
-                  disabled
+                  value={leaveEndDate}
+                  onChange={(e) => setLeaveEndDate(e.target.value)}
                 />
               </div>
               <select
                 value={selectedLeaveReason}
                 onChange={(e) => setSelectedLeaveReason(e.target.value)}
                 className="w-full px-2 py-1 border rounded"
-                disabled={!selectedWeek}
               >
                 <option value="">Reason for leave...</option>
                 {leaveReasons.map(reason => (
@@ -456,8 +469,8 @@ const TraumaSurgeryPlannerRefactored = () => {
               </select>
               <button
                 onClick={addLeave}
-                disabled={!selectedSurgeon || !selectedWeek || !selectedLeaveReason}
-                className="w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                disabled={!selectedSurgeon || !leaveStartDate || !leaveEndDate || !selectedLeaveReason}
+                className="w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
               >
                 Add Leave
               </button>
