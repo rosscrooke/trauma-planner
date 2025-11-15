@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dataService from './services/dataService';
+import WeekDetailModal from './components/WeekDetailModal';
 
 const TraumaSurgeryPlannerRefactored = () => {
   const [baseStaff, setBaseStaff] = useState(20);
@@ -17,6 +18,7 @@ const TraumaSurgeryPlannerRefactored = () => {
   const [leaveReasons, setLeaveReasons] = useState([]);
   const [rotations, setRotations] = useState({});
   const [weekendRota, setWeekendRota] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Load data on component mount
   useEffect(() => {
@@ -530,10 +532,13 @@ const TraumaSurgeryPlannerRefactored = () => {
                 {weeks.map((week) => (
                   <tr
                     key={week.weekNumber}
-                    className={`hover:bg-gray-50 ${
+                    className={`hover:bg-gray-50 cursor-pointer ${
                       selectedWeek?.weekNumber === week.weekNumber ? 'bg-blue-100' : week.weekNumber % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                     }`}
-                    onClick={() => setSelectedWeek(week)}
+                    onClick={() => {
+                      setSelectedWeek(week);
+                      setIsModalOpen(true);
+                    }}
                   >
                     <td className="px-4 py-2 text-sm">
                       <div className="font-medium">
@@ -575,6 +580,7 @@ const TraumaSurgeryPlannerRefactored = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedWeek(week);
+                          setIsModalOpen(true);
                         }}
                         className="text-sm text-blue-500 hover:text-blue-700"
                       >
@@ -588,133 +594,19 @@ const TraumaSurgeryPlannerRefactored = () => {
           </div>
         </div>
 
-        {/* Detailed Week View */}
-        {selectedWeek && (
-          <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">
-              Week {selectedWeek.weekNumber + 1} Details - Starting {selectedWeek.startDate.toLocaleDateString()}
-            </h2>
-
-            {/* Swap Management */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">
-                Add Swap for this Week
-              </label>
-              <div className="flex gap-2">
-                <select
-                  value={selectedSwapSurgeon1}
-                  onChange={(e) => setSelectedSwapSurgeon1(e.target.value)}
-                  className="flex-1 px-3 py-2 border rounded-lg"
-                >
-                  <option value="">Original surgeon...</option>
-                  {getConsultantNames().map(name => (
-                    <option key={name} value={name}>{name}</option>
-                  ))}
-                </select>
-                <select
-                  value={selectedSwapSurgeon2}
-                  onChange={(e) => setSelectedSwapSurgeon2(e.target.value)}
-                  className="flex-1 px-3 py-2 border rounded-lg"
-                >
-                  <option value="">Replacement surgeon...</option>
-                  {getConsultantNames().map(name => (
-                    <option key={name} value={name}>{name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((dayName, dayIndex) => {
-                const day = selectedWeek.days[dayIndex];
-
-                return (
-                  <div key={dayIndex} className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">
-                      {dayName}
-                      <span className="text-sm font-normal text-gray-500 ml-2">
-                        {day.date.toLocaleDateString()}
-                      </span>
-                    </h3>
-
-                    <div className={`text-2xl font-bold mb-2 ${
-                      day.capacityPercentage < 50
-                        ? 'text-red-600'
-                        : day.capacityPercentage < 75
-                        ? 'text-yellow-600'
-                        : 'text-green-600'
-                    }`}>
-                      {day.available} / {baseStaff}
-                    </div>
-
-                    {day.swap && (
-                      <div className="mb-2 p-2 bg-blue-100 rounded text-xs">
-                        <strong>Swap:</strong> {day.swap.originalSurgeon} → {day.swap.newSurgeon}
-                      </div>
-                    )}
-
-                    {!day.swap && selectedSwapSurgeon1 && selectedSwapSurgeon2 && (
-                      <button
-                        onClick={() => addSwap(selectedWeek.weekNumber, dayIndex)}
-                        className="mb-2 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
-                      >
-                        Apply Swap Here
-                      </button>
-                    )}
-
-                    {day.onCall && (
-                      <div className="mb-2 p-2 bg-purple-100 rounded">
-                        <div className="text-xs font-semibold">On Call:</div>
-                        <div className="text-sm">{day.onCall}</div>
-                      </div>
-                    )}
-
-                    {day.assigned.length > 0 && (
-                      <div className="mb-2">
-                        <div className="text-xs font-semibold mb-1">Assigned:</div>
-                        {day.assigned.map((a, i) => (
-                          <div
-                            key={i}
-                            className={`text-xs p-1 rounded mb-1 ${
-                              !a.available && dayIndex === 4 ? 'bg-red-100' : 'bg-gray-100'
-                            }`}
-                          >
-                            <strong>{a.name}</strong>
-                            <div className="text-gray-600">{a.duty}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="mb-2">
-                      <div className="text-xs font-semibold mb-1">Available Flexible:</div>
-                      <div className="space-y-1">
-                        {day.availableFlexible.map((name, i) => (
-                          <div key={i} className="text-xs bg-green-100 p-1 rounded">
-                            {name}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {day.onLeave.length > 0 && (
-                      <div>
-                        <div className="text-xs font-semibold mb-1">On Leave:</div>
-                        <div className="space-y-1">
-                          {day.onLeave.map((l, i) => (
-                            <div key={i} className="text-xs bg-red-100 p-1 rounded">
-                              {l.name} ({l.reason})
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {/* Week Detail Modal */}
+        <WeekDetailModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          selectedWeek={selectedWeek}
+          selectedSwapSurgeon1={selectedSwapSurgeon1}
+          setSelectedSwapSurgeon1={setSelectedSwapSurgeon1}
+          selectedSwapSurgeon2={selectedSwapSurgeon2}
+          setSelectedSwapSurgeon2={setSelectedSwapSurgeon2}
+          getConsultantNames={getConsultantNames}
+          addSwap={addSwap}
+          baseStaff={baseStaff}
+        />
       </div>
     </div>
   );
