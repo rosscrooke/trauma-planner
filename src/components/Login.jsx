@@ -96,10 +96,6 @@ const Login = ({ onLogin }) => {
             </button>
           </div>
 
-          <div className="text-xs text-gray-500 text-center">
-            <p>Demo credentials for testing:</p>
-            <p className="font-mono mt-1">lynn.hutchings@gmail.com / MK</p>
-          </div>
         </form>
       </div>
     </div>
