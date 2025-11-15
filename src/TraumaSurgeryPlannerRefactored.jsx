@@ -46,11 +46,6 @@ const TraumaSurgeryPlannerRefactored = () => {
           dataService.getOverrides()
         ]);
 
-        setLeave(leaveData);
-        setSwaps(swapsData);
-        setPackhamClarkeOverrides(overridesData.packhamClarke || {});
-        setBakerBickOverrides(overridesData.bakerBick || {});
-
         // Add Selina Graham's maternity leave if not present
         const hasSelinaLeave = leaveData.some(l => l.id === 999999);
         if (!hasSelinaLeave) {
@@ -61,8 +56,14 @@ const TraumaSurgeryPlannerRefactored = () => {
             endDate: '2026-03-01',
             reason: 'Maternity leave'
           };
-          await handleAddLeave(selinaMaternityLeave);
+          const result = await dataService.addLeave(selinaMaternityLeave);
+          leaveData.push(result.entry);
         }
+
+        setLeave(leaveData);
+        setSwaps(swapsData);
+        setPackhamClarkeOverrides(overridesData.packhamClarke || {});
+        setBakerBickOverrides(overridesData.bakerBick || {});
       } catch (error) {
         console.error('Error loading data:', error);
       } finally {

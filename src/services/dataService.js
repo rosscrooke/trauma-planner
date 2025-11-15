@@ -9,8 +9,11 @@ class DataService {
     this.rotations = rotationsData;
     this.weekendRota = weekendRotaData.fridayWeekendRota;
     this.apiBase = '/.netlify/functions';
-    // Check if running on Netlify
-    this.isNetlify = window.location.hostname.includes('netlify');
+    // Check if running on Netlify - detect by checking if functions are available
+    // In production, always try to use Netlify Functions first, fallback to localStorage if they fail
+    this.isNetlify = window.location.hostname !== 'localhost' &&
+                     window.location.hostname !== '127.0.0.1' &&
+                     !window.location.hostname.startsWith('192.168.');
   }
 
   // Static data methods
@@ -48,12 +51,18 @@ class DataService {
 
     try {
       const response = await fetch(`${this.apiBase}/leave-get`);
-      if (!response.ok) throw new Error('Failed to fetch leave data');
+      if (!response.ok) {
+        // Fallback to localStorage if Netlify Functions not available
+        console.log('Netlify Functions not available, using localStorage');
+        const stored = localStorage.getItem('trauma-planner-leave');
+        return stored ? JSON.parse(stored) : [];
+      }
       const data = await response.json();
       return data.leave || [];
     } catch (error) {
-      console.error('Error fetching leave:', error);
-      return [];
+      console.error('Error fetching leave, falling back to localStorage:', error);
+      const stored = localStorage.getItem('trauma-planner-leave');
+      return stored ? JSON.parse(stored) : [];
     }
   }
 
@@ -76,11 +85,30 @@ class DataService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(leaveEntry)
       });
-      if (!response.ok) throw new Error('Failed to add leave');
+      if (!response.ok) {
+        // Fallback to localStorage if Netlify Functions not available
+        console.log('Netlify Functions not available, using localStorage');
+        const existing = await this.getLeave();
+        const newEntry = {
+          ...leaveEntry,
+          id: leaveEntry.id || Date.now() + Math.random()
+        };
+        const updated = [...existing, newEntry];
+        localStorage.setItem('trauma-planner-leave', JSON.stringify(updated));
+        return { entry: newEntry };
+      }
       return await response.json();
     } catch (error) {
-      console.error('Error adding leave:', error);
-      throw error;
+      console.error('Error adding leave, falling back to localStorage:', error);
+      // Fallback to localStorage
+      const existing = await this.getLeave();
+      const newEntry = {
+        ...leaveEntry,
+        id: leaveEntry.id || Date.now() + Math.random()
+      };
+      const updated = [...existing, newEntry];
+      localStorage.setItem('trauma-planner-leave', JSON.stringify(updated));
+      return { entry: newEntry };
     }
   }
 

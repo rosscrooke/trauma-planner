@@ -15,10 +15,28 @@ export default async (req, context) => {
     // Get existing leave
     const existingLeave = await store.get("leave", { type: "json" }) || [];
 
-    // Add new entry with generated ID
+    // Check for duplicate if ID is provided
+    if (leaveEntry.id) {
+      const exists = existingLeave.some(l => l.id === leaveEntry.id);
+      if (exists) {
+        return new Response(JSON.stringify({
+          success: true,
+          entry: existingLeave.find(l => l.id === leaveEntry.id),
+          message: 'Entry already exists'
+        }), {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
+      }
+    }
+
+    // Add new entry with generated ID (preserve existing ID if provided)
     const newEntry = {
       ...leaveEntry,
-      id: Date.now() + Math.random(),
+      id: leaveEntry.id || (Date.now() + Math.random()),
     };
 
     const updatedLeave = [...existingLeave, newEntry];
