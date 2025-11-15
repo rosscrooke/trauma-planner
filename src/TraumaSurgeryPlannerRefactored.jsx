@@ -56,20 +56,6 @@ const TraumaSurgeryPlannerRefactored = () => {
           dataService.getOverrides()
         ]);
 
-        // Add Selina Graham's maternity leave if not present
-        const hasSelinaLeave = leaveData.some(l => l.id === 999999);
-        if (!hasSelinaLeave) {
-          const selinaMaternityLeave = {
-            id: 999999,
-            name: 'Selina Graham',
-            startDate: '2025-09-01',
-            endDate: '2026-03-01',
-            reason: 'Maternity leave'
-          };
-          const result = await dataService.addLeave(selinaMaternityLeave);
-          leaveData.push(result.entry);
-        }
-
         setLeave(leaveData);
         setSwaps(swapsData);
         setPackhamClarkeOverrides(overridesData.packhamClarke || {});
